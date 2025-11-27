@@ -1,9 +1,9 @@
 Flask
-tensorflow==2.13.0
 Pillow
 werkzeug
 gunicorn
 flask-mail
 razorpay
 numpy
+
 
