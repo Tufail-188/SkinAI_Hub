@@ -1,0 +1,8 @@
+Flask
+tensorflow==2.19.1
+Pillow
+werkzeug
+gunicorn
+flask-mail
+razorpay
+numpy
