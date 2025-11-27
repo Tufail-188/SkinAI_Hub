@@ -1,0 +1,6 @@
+services:
+  - type: web
+    name: skinaihub
+    env: docker
+    plan: free
+    autoDeploy: true
