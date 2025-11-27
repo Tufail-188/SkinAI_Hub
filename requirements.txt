@@ -1,5 +1,5 @@
 Flask
-tensorflow==2.19.1
+tensorflow==2.15.0
 Pillow
 werkzeug
 gunicorn
