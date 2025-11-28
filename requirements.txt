@@ -1,0 +1,9 @@
+Flask
+Pillow
+werkzeug
+gunicorn
+flask-mail
+razorpay
+numpy
+
+
