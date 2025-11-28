@@ -1,352 +1,299 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="utf-8" />
-  <meta name="viewport" content="width=device-width,initial-scale=1" />
-  <title>SkinAI Hub — Prediction & Appointments</title>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>SkinAI Hub – AI Skin Detection</title>
 
-  <!-- Bootstrap CSS -->
-  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.1/dist/css/bootstrap.min.css" rel="stylesheet">
+    <!-- Bootstrap -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.1/dist/css/bootstrap.min.css" rel="stylesheet">
 
-  <style>
-    body { padding-top: 70px; }
-    .hero { background-color: #f8f9fa; padding: 60px 0; text-align: center; }
-    .prediction-card { margin-top: 30px; }
-    .info-box { background: #f0f8ff; border-left: 5px solid #0d6efd; padding: 20px; border-radius: 6px; }
-    .care-box { background: #fff3cd; border-left: 5px solid #ffc107; padding: 20px; border-radius: 6px; }
-    .uploaded-img { max-height: 250px; object-fit: cover; border-radius: 10px; }
-    .doctor-card { transition: transform .18s ease, box-shadow .18s ease; }
-    .doctor-card:hover { transform: translateY(-6px); box-shadow: 0 12px 30px rgba(0,0,0,0.12); }
-  </style>
+    <style>
+        body { padding-top: 80px; }
+        .hero { background: #f8f9fa; padding: 60px 0; text-align: center; }
+        .uploaded-img { max-height: 250px; border-radius: 10px; object-fit: cover; }
+        .info-box { background: #e8f0ff; padding: 15px; border-left: 5px solid #0d6efd; border-radius: 6px; }
+        .care-box { background: #fff3cd; padding: 15px; border-left: 5px solid #ffc107; border-radius: 6px; }
+    </style>
 </head>
+
 <body>
 
 <!-- Navbar -->
-<nav class="navbar navbar-expand-lg navbar-dark bg-primary fixed-top">
-  <div class="container">
-    <a class="navbar-brand fw-bold" href="#">SkinAI Hub</a>
-    <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav">
-      <span class="navbar-toggler-icon"></span>
-    </button>
+<nav class="navbar navbar-expand-lg navbar-dark bg-primary fixed-top shadow">
+    <div class="container">
+        <a class="navbar-brand fw-bold" href="#">SkinAI Hub</a>
 
-    <div class="collapse navbar-collapse justify-content-end" id="navbarNav">
-      <ul class="navbar-nav">
-        <li class="nav-item"><a class="nav-link active" href="#">Home</a></li>
-        <li class="nav-item"><a class="nav-link" href="#predictions">Predictions</a></li>
-        <li class="nav-item"><a class="nav-link" href="#doctors">Doctors</a></li>
-        <li class="nav-item"><a class="nav-link text-warning" href="/logout">Logout ({{ username }})</a></li>
-      </ul>
+        <div class="d-flex">
+            <a href="/admin/appointments" class="btn btn-light me-2">View Appointments</a>
+            <a href="/logout" class="btn btn-outline-light">Logout</a>
+        </div>
     </div>
-  </div>
 </nav>
 
 <!-- Hero -->
 <section class="hero">
-  <div class="container">
-    <h1 class="display-4 fw-bold">Skin Cancer Prediction AI</h1>
-    <p class="lead">Upload a skin lesion image and get AI-powered analysis & care guidance instantly.</p>
-    <a href="#predictions" class="btn btn-primary btn-lg px-4">Get Started</a>
-  </div>
+    <div class="container">
+        <h1 class="display-5 fw-bold">AI-Powered Skin Disease Detection</h1>
+        <p class="lead">Upload a skin image and get instant prediction using AI.</p>
+    </div>
 </section>
 
 <!-- Prediction Section -->
-<section id="predictions" class="py-5">
-  <div class="container">
-    <h2 class="text-center mb-4 fw-semibold">Make a Prediction</h2>
+<div class="container py-5">
+    <h3 class="text-center fw-semibold mb-4">Upload Skin Image</h3>
 
-    <div class="row justify-content-center">
-      <div class="col-md-6">
-        <div class="card shadow-sm p-4">
-          <form method="POST" enctype="multipart/form-data">
-            <label class="form-label fw-semibold">Upload Skin Lesion Image:</label>
-            <input type="file" name="file" accept="image/*" class="form-control mb-3" required>
-            <button class="btn btn-success btn-lg w-100">Predict</button>
-          </form>
-        </div>
+    <!-- Upload Form -->
+    <form method="POST" enctype="multipart/form-data" class="card p-4 shadow-sm">
+        <label class="form-label fw-semibold">Choose Skin Image:</label>
+        <input type="file" name="file" accept="image/*" class="form-control mb-3" required>
+        <button class="btn btn-success w-100">Predict</button>
+    </form>
 
-        {% if uploaded_image_path %}
-        <div class="text-center mt-4">
-          <h5 class="fw-semibold">Uploaded Image</h5>
-          <img src="{{ uploaded_image_path }}" class="uploaded-img img-fluid shadow-sm">
-        </div>
-        {% endif %}
-
-        {% if prediction_text %}
-        <div class="prediction-card card shadow-sm mt-4">
-          <div class="card-body">
-            <h4 class="text-center text-primary fw-bold">{{ prediction_text }}</h4>
-
-            {% if disease_description %}
-            <div class="info-box mt-3">
-              <h5 class="fw-bold">About This Condition</h5>
-              <p>{{ disease_description }}</p>
-            </div>
-            {% endif %}
-
-            {% if disease_care %}
-            <div class="care-box mt-3">
-              <h5 class="fw-bold">Care Recommendations</h5>
-              <p>{{ disease_care }}</p>
-            </div>
-            {% endif %}
-          </div>
-        </div>
-        {% endif %}
-
-      </div>
-    </div>
-  </div>
-</section>
-
-<!-- Doctor Recommendation Section -->
-<section id="doctors" class="py-5 bg-light">
-  <div class="container">
-    <h2 class="text-center mb-4 fw-semibold">Find Dermatologists Near You</h2>
-
-    <!-- Search Box -->
-    <div class="row justify-content-center mb-4">
-      <div class="col-md-6">
-        <input type="text" id="searchCity" class="form-control form-control-lg" placeholder="Enter your city (e.g., Bangalore)">
-      </div>
-    </div>
-
-    <!-- Doctor Cards -->
-    <div class="row g-4" id="doctorList">
-
-      <div class="col-md-4 doctor-card" data-city="Bangalore Bengaluru">
-        <div class="card shadow-sm">
-          <img src="https://img.freepik.com/free-photo/portrait-smiling-doctor-with-stethoscope-standing-hospital-corridor_53419-1426.jpg" class="card-img-top" alt="Dr. Priya">
-          <div class="card-body">
-            <h5 class="card-title fw-bold">Dr. Priya Sharma</h5>
-            <p class="text-muted mb-1"><strong>Dermatologist</strong> • 12+ Years Experience</p>
-            <p class="small">Skin Care Clinic, Bangalore</p>
-
-            <!-- Pay & Book: starts payment flow before opening modal -->
-            <button class="btn btn-outline-success w-100 mb-2"
-                    onclick="startPayment('Dr. Priya Sharma')">
-              💳 Pay & Book Appointment (₹99)
-            </button>
-
-            <a href="tel:+911234567890" class="btn btn-primary w-100">📞 Contact</a>
-          </div>
-        </div>
-      </div>
-
-      <div class="col-md-4 doctor-card" data-city="Hyderabad Secunderabad">
-        <div class="card shadow-sm">
-          <img src="https://img.freepik.com/free-photo/doctor-with-co-workers-analyzing-x-ray_1098-2176.jpg" class="card-img-top" alt="Dr. Arjun">
-          <div class="card-body">
-            <h5 class="card-title fw-bold">Dr. Arjun Mehta</h5>
-            <p class="text-muted mb-1"><strong>Onco-Dermatologist</strong> • 15+ Years Experience</p>
-            <p class="small">Apollo Hospitals, Hyderabad</p>
-
-            <button class="btn btn-outline-success w-100 mb-2"
-                    onclick="startPayment('Dr. Arjun Mehta')">
-              💳 Pay & Book Appointment (₹99)
-            </button>
-
-            <a href="tel:+919876543210" class="btn btn-primary w-100">📞 Contact</a>
-          </div>
-        </div>
-      </div>
-
-      <div class="col-md-4 doctor-card" data-city="Delhi New Delhi">
-        <div class="card shadow-sm">
-          <img src="https://img.freepik.com/free-photo/portrait-handsome-young-doctor_171337-1539.jpg" class="card-img-top" alt="Dr. Neha">
-          <div class="card-body">
-            <h5 class="card-title fw-bold">Dr. Neha Kapoor</h5>
-            <p class="text-muted mb-1"><strong>Skin Specialist</strong> • 10+ Years Experience</p>
-            <p class="small">Fortis Hospital, Delhi</p>
-
-            <button class="btn btn-outline-success w-100 mb-2"
-                    onclick="startPayment('Dr. Neha Kapoor')">
-              💳 Pay & Book Appointment (₹99)
-            </button>
-
-            <a href="tel:+9101122334455" class="btn btn-primary w-100">📞 Contact</a>
-          </div>
-        </div>
-      </div>
-
-    </div>
-
+    <!-- Show Uploaded Image -->
+    {% if uploaded_image_path %}
     <div class="text-center mt-4">
-      <a href="https://www.practo.com" target="_blank" class="btn btn-outline-primary btn-lg">
-        🔍 Find More Dermatologists
-      </a>
+        <h5 class="fw-bold">Uploaded Image</h5>
+        <img src="/uploads/{{ uploaded_image_path }}" class="uploaded-img shadow">
     </div>
-  </div>
-</section>
+    {% endif %}
 
-<!-- Appointment Booking Modal -->
-<div class="modal fade" id="appointmentModal" tabindex="-1">
-  <div class="modal-dialog">
-    <div class="modal-content">
+    <!-- Prediction Card -->
+    {% if prediction_text %}
+    <div class="card shadow-sm p-4 mt-4">
+        <h4 class="text-center text-primary fw-bold">{{ prediction_text }}</h4>
 
-      <div class="modal-header bg-primary text-white">
-        <h5 class="modal-title">Book Appointment</h5>
-        <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
-      </div>
-
-      <div class="modal-body">
-        <form id="appointmentForm">
-
-          <div class="mb-3">
-            <label class="form-label">Doctor</label>
-            <input type="text" id="appointmentDoctor" class="form-control" readonly>
-          </div>
-
-          <div class="mb-3">
-            <label class="form-label">Your Name</label>
-            <input type="text" id="patientName" class="form-control" required>
-          </div>
-
-          <div class="mb-3">
-            <label class="form-label">Your Email</label>
-            <input type="email" id="patientEmail" class="form-control" required>
-          </div>
-
-          <div class="mb-3">
-            <label class="form-label">Your Phone</label>
-            <input type="text" id="patientPhone" class="form-control" required>
-          </div>
-
-          <div class="mb-3">
-            <label class="form-label">Preferred Date</label>
-            <input type="date" id="appointmentDate" class="form-control" required>
-          </div>
-
-          <div class="mb-3">
-            <label class="form-label">Preferred Time</label>
-            <input type="time" id="appointmentTime" class="form-control" required>
-          </div>
-
-        </form>
-
-        <div id="appointmentSuccess" class="alert alert-success mt-3 d-none">
-          Appointment Request Sent! The clinic will contact you soon.
+        {% if disease_description %}
+        <div class="info-box mt-3">
+            <h5 class="fw-bold">About This Condition</h5>
+            <p>{{ disease_description }}</p>
         </div>
+        {% endif %}
 
-      </div>
-
-      <div class="modal-footer">
-        <button class="btn btn-success" onclick="submitAppointment()">Submit</button>
-      </div>
-
+        {% if disease_care %}
+        <div class="care-box mt-3">
+            <h5 class="fw-bold">Care Recommendations</h5>
+            <p>{{ disease_care }}</p>
+        </div>
+        {% endif %}
     </div>
-  </div>
+    {% endif %}
 </div>
 
-<!-- Razorpay checkout -->
+<!-- Doctors Section -->
+<section class="bg-light py-5">
+    <div class="container">
+        <h2 class="text-center fw-semibold mb-4">Find Dermatologists Near You</h2>
+
+        <div class="text-center mb-3">
+            <input id="searchCity" class="form-control form-control-lg w-50 mx-auto"
+                   placeholder="Search by city (e.g., Hyderabad)">
+        </div>
+
+        <div class="row g-4" id="doctorList">
+
+            <!-- Doctor #1 (example) -->
+            <div class="col-md-4 doctor-card" data-city="Hyderabad Secunderabad">
+                <div class="card shadow-sm">
+                    <img src="https://img.freepik.com/free-photo/doctor-with-co-workers-analyzing-x-ray_1098-2176.jpg"
+                         class="card-img-top">
+
+                    <div class="card-body">
+                        <h5 class="fw-bold">Dr. Arjun Mehta</h5>
+                        <p class="text-muted">Apollo Hospitals, Hyderabad</p>
+
+                        <!-- Payment First -->
+                        <button class="btn btn-primary w-100"
+                                onclick="startPayment('Dr. Arjun Mehta')">
+                            💳 Pay ₹99 & Book Appointment
+                        </button>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Add more doctors if needed -->
+             <!-- Doctor #2 -->
+<div class="col-md-4 doctor-card" data-city="Bangalore Bengaluru">
+    <div class="card shadow-sm">
+        <img src="https://img.freepik.com/free-photo/portrait-smiling-female-doctor-hospital_53419-1517.jpg"
+             class="card-img-top">
+
+        <div class="card-body">
+            <h5 class="fw-bold">Dr. Priya Sharma</h5>
+            <p class="text-muted">Fortis Hospital, Bangalore</p>
+
+            <button class="btn btn-primary w-100"
+                    onclick="startPayment('Dr. Priya Sharma')">
+                💳 Pay ₹99 & Book Appointment
+            </button>
+        </div>
+    </div>
+</div>
+<!-- Doctor #3 -->
+<div class="col-md-4 doctor-card" data-city="Delhi New Delhi">
+    <div class="card shadow-sm">
+        <img src="https://img.freepik.com/free-photo/portrait-smiling-young-male-doctor-standing-hospital-corridor_53419-1606.jpg"
+             class="card-img-top">
+
+        <div class="card-body">
+            <h5 class="fw-bold">Dr. Neeraj Kapoor</h5>
+            <p class="text-muted">AIIMS Hospital, New Delhi</p>
+
+            <button class="btn btn-primary w-100"
+                    onclick="startPayment('Dr. Neeraj Kapoor')">
+                💳 Pay ₹99 & Book Appointment
+            </button>
+        </div>
+    </div>
+</div>
+
+
+        </div>
+    </div>
+</section>
+
+<!-- Appointment Modal -->
+<div class="modal fade" id="appointmentModal">
+    <div class="modal-dialog">
+        <div class="modal-content">
+
+            <div class="modal-header bg-primary text-white">
+                <h5 class="modal-title">Book Appointment</h5>
+                <button class="btn-close" data-bs-dismiss="modal"></button>
+            </div>
+
+            <div class="modal-body">
+
+                <form id="appointmentForm">
+                    <input type="hidden" id="paymentId">
+
+                    <div class="mb-3">
+                        <label class="form-label">Doctor</label>
+                        <input id="appointmentDoctor" class="form-control" readonly>
+                    </div>
+
+                    <div class="mb-3">
+                        <label>Your Name</label>
+                        <input id="patientName" class="form-control" required>
+                    </div>
+
+                    <div class="mb-3">
+                        <label>Email</label>
+                        <input id="patientEmail" type="email" class="form-control" required>
+                    </div>
+
+                    <div class="mb-3">
+                        <label>Phone</label>
+                        <input id="patientPhone" class="form-control" required>
+                    </div>
+
+                    <div class="mb-3">
+                        <label>Date</label>
+                        <input id="appointmentDate" type="date" class="form-control" required>
+                    </div>
+
+                    <div class="mb-3">
+                        <label>Time</label>
+                        <input id="appointmentTime" type="time" class="form-control" required>
+                    </div>
+                </form>
+
+                <div id="appointmentSuccess" class="alert alert-success d-none mt-3">
+                    Appointment booked successfully! ✔
+                </div>
+
+            </div>
+
+            <div class="modal-footer">
+                <button class="btn btn-success w-100"
+                        onclick="submitAppointment()">
+                    Save Appointment
+                </button>
+            </div>
+
+        </div>
+    </div>
+</div>
+
+<!-- Razorpay Script -->
 <script src="https://checkout.razorpay.com/v1/checkout.js"></script>
 
-<!-- JavaScript -->
 <script>
-  // Filter doctors by city
-  document.getElementById("searchCity").addEventListener("keyup", function() {
-    let input = this.value.toLowerCase();
-    document.querySelectorAll(".doctor-card").forEach(card => {
-      let city = card.getAttribute("data-city").toLowerCase();
-      card.style.display = city.includes(input) ? "block" : "none";
-    });
-  });
+let selectedDoctor = "";
 
-  // Set doctor in modal
-  function setDoctor(name) {
-    document.getElementById("appointmentDoctor").value = name;
-  }
-
-  // Start Razorpay payment flow; on success open appointment modal
-  function startPayment(doctorName) {
-    // amount in rupees (you can make dynamic)
-    const amountRupees = 99;
+function startPayment(doctorName) {
+    selectedDoctor = doctorName;
 
     fetch("/create_order", {
-      method: "POST",
-      headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({ amount: amountRupees })
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ amount: 99 })
     })
-    .then(res => res.json())
+    .then(r => r.json())
     .then(order => {
-      const options = {
-        "key": "RAZORPAY_KEY_ID_HERE", // replace with your key id
-        "amount": order.amount,
-        "currency": order.currency || "INR",
-        "name": "SkinAI Hub",
-        "description": "Appointment Booking Payment",
-        "order_id": order.id,
-        "handler": function (response){
-          // Payment successful -> show appointment modal
-          setDoctor(doctorName);
-          var modal = new bootstrap.Modal(document.getElementById('appointmentModal'));
-          modal.show();
-        },
-        "prefill": {
-          "name": "{{ username }}",
-          "email": ""
-        },
-        "theme": { "color": "#0d6efd" }
-      };
 
-      const rzp = new Razorpay(options);
-      rzp.on('payment.failed', function (response){
-        alert("Payment failed: " + (response.error && response.error.description ? response.error.description : 'Unknown error'));
-      });
+        let options = {
+            "key": "{{ razorpay_key }}",
+            "amount": order.amount,
+            "currency": "INR",
+            "name": "SkinAI Hub",
+            "description": "Appointment Fee",
+            "order_id": order.id,
 
-      rzp.open();
-    })
-    .catch(err => {
-      console.error("Create order error:", err);
-      alert("Could not start payment. Try again.");
+            "handler": function (response) {
+                document.getElementById("paymentId").value =
+                    response.razorpay_payment_id;
+
+                document.getElementById("appointmentDoctor").value = selectedDoctor;
+
+                new bootstrap.Modal(document.getElementById("appointmentModal")).show();
+            }
+        };
+
+        new Razorpay(options).open();
     });
-  }
+}
 
-  // Submit appointment form (after successful payment + modal)
-  function submitAppointment() {
+function submitAppointment() {
     let data = {
-      doctor: document.getElementById("appointmentDoctor").value,
-      name: document.getElementById("patientName").value,
-      email: document.getElementById("patientEmail").value,
-      phone: document.getElementById("patientPhone").value,
-      date: document.getElementById("appointmentDate").value,
-      time: document.getElementById("appointmentTime").value
+        doctor: document.getElementById("appointmentDoctor").value,
+        name: document.getElementById("patientName").value,
+        email: document.getElementById("patientEmail").value,
+        phone: document.getElementById("patientPhone").value,
+        date: document.getElementById("appointmentDate").value,
+        time: document.getElementById("appointmentTime").value,
+        payment_id: document.getElementById("paymentId").value
     };
 
-    // basic validation
-    if (!data.name || !data.email || !data.phone || !data.date || !data.time) {
-      alert("Please fill all fields.");
-      return;
-    }
-
     fetch("/save_appointment", {
-      method: "POST",
-      headers: { "Content-Type": "application/json" },
-      body: JSON.stringify(data)
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify(data)
     })
-    .then(res => res.json())
-    .then(response => {
-      console.log("Server Response:", response);
-      if (response.status === "success") {
-        document.getElementById("appointmentSuccess").classList.remove("d-none");
-        setTimeout(() => {
-          document.getElementById("appointmentSuccess").classList.add("d-none");
-          document.getElementById("appointmentForm").reset();
-          var modalEl = document.getElementById('appointmentModal');
-          var modal = bootstrap.Modal.getInstance(modalEl);
-          if (modal) modal.hide();
-        }, 2000);
-      } else {
-        alert("Could not save appointment: " + (response.message || "Unknown error"));
-      }
-    })
-    .catch(err => {
-      console.error("Save appointment error:", err);
-      alert("Server error. Try again.");
+    .then(r => r.json())
+    .then(res => {
+        if (res.status === "success") {
+            document.getElementById("appointmentSuccess").classList.remove("d-none");
+
+            setTimeout(() => {
+                location.reload();
+            }, 2000);
+        }
     });
-  }
+}
+
+document.getElementById("searchCity").addEventListener("keyup", function() {
+    let input = this.value.toLowerCase();
+    document.querySelectorAll(".doctor-card").forEach(card => {
+        card.style.display = card.getAttribute("data-city").toLowerCase().includes(input)
+            ? "block"
+            : "none";
+    });
+});
 </script>
 
-<!-- Bootstrap JS -->
+<!-- Bootstrap -->
 <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.1/dist/js/bootstrap.bundle.min.js"></script>
+
 </body>
 </html>
