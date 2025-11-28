@@ -1,0 +1,4 @@
+[service]
+name = "SkinAI_Hub"
+start = "python app.py"
+
